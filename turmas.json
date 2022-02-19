@@ -1,0 +1,53 @@
+{
+    "nr_cadeiras": 8,
+    "cadeiras": [
+        {
+            "nome": "Conhecimento e Raciocínio",
+            "prioridade": 7,
+            "teorica": "T1",
+            "pratica": "P1"
+        },
+        {
+            "nome": "Interação Pessoa-Máquina",
+            "prioridade": 5,
+            "teorica": "T1",
+            "pratica": "P2"
+        },
+        {
+            "nome": "Linguagens Script",
+            "prioridade": 6,
+            "teorica": "T2",
+            "pratica": "P8"
+        },
+        {
+            "nome": "Modelação e Design",
+            "prioridade": 4,
+            "teorica": "T1",
+            "pratica": "P3"
+        },
+        {
+            "nome": "Programação Avançada",
+            "prioridade": 2,
+            "teorica": "T1",
+            "pratica": "P1"
+        },
+        {
+            "nome": "Sistemas Operativos II",
+            "prioridade": 1,
+            "teorica": "T1",
+            "pratica": "P1"
+        },
+        {
+            "nome": "Ética e Deontologia",
+            "prioridade": 8,
+            "teorica": "T1",
+            "pratica": null
+        },
+        {
+            "nome": "Métodos Estatísticos",
+            "prioridade": 3,
+            "teorica": "T1",
+            "pratica": "P6"
+        }
+    ]
+}
