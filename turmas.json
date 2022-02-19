@@ -1,53 +1,46 @@
 {
+    "numero_aluno": "2020143845",
     "nr_cadeiras": 8,
     "cadeiras": [
         {
             "nome": "Conhecimento e Raciocínio",
-            "prioridade": 7,
-            "teorica": "T1",
-            "pratica": "P1"
+            "teorica": ["T1"],
+            "pratica": ["P1", "P4"]
         },
         {
             "nome": "Interação Pessoa-Máquina",
-            "prioridade": 5,
             "teorica": "T1",
-            "pratica": "P2"
+            "pratica": ["P2", "P4"]
         },
         {
             "nome": "Linguagens Script",
-            "prioridade": 6,
-            "teorica": "T2",
-            "pratica": "P8"
+            "teorica": ["T2", "T3"],
+            "pratica": ["P8", "P9"]
         },
         {
             "nome": "Modelação e Design",
-            "prioridade": 4,
             "teorica": "T1",
-            "pratica": "P3"
+            "pratica": ["P1", "P3"]
         },
         {
             "nome": "Programação Avançada",
-            "prioridade": 2,
             "teorica": "T1",
-            "pratica": "P1"
+            "pratica": ["P3", "P1"]
         },
         {
             "nome": "Sistemas Operativos II",
-            "prioridade": 1,
             "teorica": "T1",
-            "pratica": "P1"
+            "pratica": ["P1", "P6"]
         },
         {
             "nome": "Ética e Deontologia",
-            "prioridade": 8,
             "teorica": "T1",
             "pratica": null
         },
         {
             "nome": "Métodos Estatísticos",
-            "prioridade": 3,
-            "teorica": "T1",
-            "pratica": "P6"
+            "teorica": ["T1", "T2"],
+            "pratica": ["P5", "P6"]
         }
     ]
 }
