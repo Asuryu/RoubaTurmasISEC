@@ -14,36 +14,29 @@ def mostraASCII():
     print("")
 
 
-def pedeCredenciais():
-    email = input("Introduz o teu email do ISEC: ")
-    while(email == ""):
-        email = input("Introduz o teu email do ISEC: ")
+def lerFicheiro():
+    # Ler ficheiro turmas.json e guardar as cadeiras numa lista
+    with open("turmas.json", "r") as f:
+        data = json.load(f)
+
+    return data
+    
+
+def pedeCredenciais(nr_aluno):
+    print("ALUNO", nr_aluno)
     password = input("Introduz a tua password: ")
     while(password == ""):
         password = input("Introduz a tua password: ")
     
-    return email, password
-
-
-def introduzirCadeiras():
-    # Ler ficheiro turmas.json e guardar as cadeiras numa lista
-    with open("turmas.json", "r") as f:
-        turmas = json.load(f)
-
-    cadeiras = []
-    for cadeira in turmas["cadeiras"]:
-        cadeiras.append(cadeira)
-
-    return cadeiras
-
+    return password
 
 
 
 
 mostraASCII()
-email, password = pedeCredenciais()
-turmas = introduzirCadeiras()
-print(introduzirCadeiras())
+data = lerFicheiro()
+password = pedeCredenciais(data["numero_aluno"])
+print(lerFicheiro())
 
 driver = webdriver.Firefox()
 driver.get("https://inforestudante.ipc.pt/nonio/security/login.do")
@@ -51,6 +44,7 @@ assert "InforEstudante - NONIO IPC" in driver.title
 
 email_input = driver.find_element("id", "username")
 email_input.click()
+email = "a" + data["numero_aluno"] + "@isec.pt"
 for letter in email:
     email_input.send_keys(letter)
     
@@ -61,5 +55,8 @@ for letter in password:
 
 login = driver.find_element("class name", "button")
 login.click()
+
+time.sleep(10)
+driver.close()
 
 #driver.get("https://inforestudante.ipc.pt/nonio/inscturmas/listaInscricoes.do")
