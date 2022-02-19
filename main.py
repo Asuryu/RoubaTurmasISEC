@@ -1,11 +1,20 @@
+# pip install py-cpuinfo selenium
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+import os
+import sys
 import time
 import json
+import cpuinfo
+import platform
+
+getCwd = lambda: os.path.dirname(sys.executable) if hasattr(sys, 'frozen') else os.path.dirname(os.path.realpath(sys.argv[0]))
 
 def mostraASCII():
     print(R" _____             _        _______                              ")
@@ -70,12 +79,22 @@ def signClass( driver, class_name ):
     # codigo por desvendar
     return True
 
+def getBinaryPath():
+    is_64bits = sys.maxsize > 2**32
+
+    if platform.system() == "Windows":
+        return "{}\\geckodriver (Windows x{}).exe".format( getCwd( ), "64" if is_64bits else "86" )
+    elif platform.system() == "Linux":
+        return "{}\\geckodriver (Linux x{}).exe".format( getCwd( ), "64" if is_64bits else "86" )
+    
+    return "{}\\geckodriver (MacOS - {}).exe".format( getCwd( ), "M1" if "m1" in cpuinfo.get_cpu_info( ).get( "brand_raw" ).lower( ) else "Intel" )
+
 mostraASCII()
 data = lerFicheiro()
 password = pedeCredenciais(data["numero_aluno"])
 print(lerFicheiro())
-
-driver = webdriver.Firefox()
+binary = FirefoxBinary( getBinaryPath( ) )
+driver = webdriver.Firefox( firefox_binary=binary )
 driver.get("https://inforestudante.ipc.pt/nonio/security/login.do")
 assert "InforEstudante - NONIO IPC" in driver.title
 
