@@ -1,0 +1,17 @@
+{
+    "domain": "inforestudante.ipc.pt",
+    "classes": [
+        {
+            "name": "Linguagens Script",
+            "practice": ["P1"],
+            "theoric": ["T1"],
+            "theoric_practice": []
+        },
+        {
+            "name": "Métodos Estatísticos",
+            "practice": ["P2"],
+            "theoric": ["T2"],
+            "theoric_practice": []
+        }
+    ]
+}
