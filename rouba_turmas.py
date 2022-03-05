@@ -1,7 +1,10 @@
+# pip install bs4 lxml requests
 import json
 import requests
 from enum import Enum
+from getpass import getpass
 from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
 
 class ClassesType(Enum):
     practice = 1
@@ -10,16 +13,42 @@ class ClassesType(Enum):
 
 config = json.load(open("config.json", encoding="utf-8"))
 
-# inserir jsessionid token depois metemos login e deixamos isto mais bonito
-jsessionid_token = ""
-
 s = requests.Session()
-s.cookies.set("JSESSIONID", jsessionid_token, domain=config["domain"])
+
+izek_adapter = HTTPAdapter(max_retries=10)
+s.mount("https://{}".format(config["domain"]), izek_adapter)
+
+# inserir jsessionid token depois metemos login e deixamos isto mais bonito
+# jsessionid_token = ""
+# s.cookies.set("JSESSIONID", jsessionid_token, domain=config["domain"])
+
+def get(url):
+    while True:
+        try:
+            r = s.get(url, timeout=15)
+        except:
+            continue
+
+        if r.status_code == 200:
+            break
+    return r
+
+def post(url, data):
+    while True:
+        try:
+            r = s.post(url, data=data, timeout=15)
+        except:
+            continue
+
+        if r.status_code == 200:
+            break
+    return r
+
 
 def subscribeClass(href, class_info):
     print("[ + ] Subscribing {}".format(class_info["name"]))
 
-    r = s.get( href )
+    r = get(href)
     soup = BeautifulSoup(r.text, "lxml")
     table_elems = soup.find("form", attrs={"id": "inscreverFormBean"}).find("table").findChildren("tr", recursive=False)
     
@@ -51,20 +80,26 @@ def subscribeClass(href, class_info):
 
             print("[ ! ] {} is full, trying the next one".format(target_class))
     
-    r.status_code = 0
-    while r.status_code != 200:
-        r = s.post("{}/inscrever.do?method=submeter".format(subscribe_href), data=payload, timeout=None)
+    r = post("{}/inscrever.do?method=submeter".format(subscribe_href), payload)
 
     print("[ + ] Subscription Completed!")
     return True
 
+def login(user, password):
+    data = { "tipoCaptcha": "text", "username": user, "password": password }
+    r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
+
+
+password = getpass()
+login("{}@isec.pt".format(config["student_number"]), password)
+
 subscribe_href = "https://{}/nonio/inscturmas".format(config["domain"])
-r = s.get("{}/init.do".format(subscribe_href))
+r = get("{}/init.do".format(subscribe_href))
 
 soup = BeautifulSoup(r.text, "lxml")
 course_href = soup.find("div", attrs={"id": "link_0"}).find("a")["href"]
 
-r = s.get("{}/{}".format(subscribe_href, course_href))
+r = get("{}/{}".format(subscribe_href, course_href))
 
 soup = BeautifulSoup(r.text, "lxml")
 subjects_elems = soup.find("form", attrs={"id": "listaInscricoesFormBean"}).find("table", attrs={"class": "displaytable"}).find("tbody").findChildren("tr")
@@ -76,6 +111,8 @@ for subject_elem in subjects_elems:
     subject_href = info_elems[6].find("a")["href"]
 
     subjects_list[subject_name] = "{}/{}".format(subscribe_href, subject_href)
+
+print( subjects_list )
 
 for class_info in config["classes"]:
     if subjects_list[class_info["name"]]:
