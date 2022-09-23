@@ -1,6 +1,9 @@
 # pip install bs4 lxml requests
+from asyncio import threads
 import json
 import requests
+import threading
+import concurrent.futures
 from enum import Enum
 from getpass import getpass
 from bs4 import BeautifulSoup
@@ -116,9 +119,16 @@ for subject_elem in subjects_elems:
     subject_href = info_elems[6].find("a")["href"]
     subjects_list[subject_name] = "{}/{}".format(subscribe_href, subject_href)
 
+threads_ = []
+
 for class_info in config["classes"]:
     if subjects_list[class_info["name"]]:
         subject_href = subjects_list[class_info["name"]]
 
         # separating in function to maybe async this later
-        subscribeClass(subject_href, class_info)
+        x = threading.Thread(target=subscribeClass, args=(subject_href, class_info))
+        threads_.append(x)
+        x.start()
+
+for thread in threads_: 
+    thread.join()
