@@ -5,6 +5,7 @@ from enum import Enum
 from getpass import getpass
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
+from multiprocessing import Pool, freeze_support
 
 class ClassesType(Enum):
     practice = 1
@@ -89,34 +90,37 @@ def login(user, password):
     data = { "tipoCaptcha": "text", "username": user, "password": password }
     r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
 
+if __name__ == '__main__':
+    freeze_support()
 
-password = getpass()
-login("{}@isec.pt".format(config["student_number"]), password)
+    password = getpass()
+    login("{}@isec.pt".format(config["student_number"]), password)
 
-subscribe_href = "https://{}/nonio/inscturmas".format(config["domain"])
-r = get("{}/init.do".format(subscribe_href))
+    subscribe_href = "https://{}/nonio/inscturmas".format(config["domain"])
+    r = get("{}/init.do".format(subscribe_href))
 
-soup = BeautifulSoup(r.text, "lxml")
-course_href = soup.find("div", attrs={"id": "link_0"}).find("a")["href"]
+    soup = BeautifulSoup(r.text, "lxml")
+    course_href = soup.find("div", attrs={"id": "link_0"}).find("a")["href"]
 
-r = get("{}/{}".format(subscribe_href, course_href))
+    r = get("{}/{}".format(subscribe_href, course_href))
 
-soup = BeautifulSoup(r.text, "lxml")
-subjects_elems = soup.find("form", attrs={"id": "listaInscricoesFormBean"}).find("table", attrs={"class": "displaytable"}).find("tbody").findChildren("tr")
+    soup = BeautifulSoup(r.text, "lxml")
+    subjects_elems = soup.find("form", attrs={"id": "listaInscricoesFormBean"}).find("table", attrs={"class": "displaytable"}).find("tbody").findChildren("tr")
 
-subjects_list = {}
-for subject_elem in subjects_elems:
-    info_elems = subject_elem.findChildren('td')
-    subject_name = info_elems[1].text
-    subject_href = info_elems[6].find("a")["href"]
+    subjects_list = {}
+    for subject_elem in subjects_elems:
+        info_elems = subject_elem.findChildren('td')
+        subject_name = info_elems[1].text
+        subject_href = info_elems[6].find("a")["href"]
 
-    subjects_list[subject_name] = "{}/{}".format(subscribe_href, subject_href)
+        subjects_list[subject_name] = "{}/{}".format(subscribe_href, subject_href)
 
-print( subjects_list )
+    print( subjects_list )
 
-for class_info in config["classes"]:
-    if subjects_list[class_info["name"]]:
-        subject_href = subjects_list[class_info["name"]]
+    with Pool(processes=8) as pool:
+        for class_info in config["classes"]:
+            if subjects_list[class_info["name"]]:
+                subject_href = subjects_list[class_info["name"]]
 
-        # separating in function to maybe async this later
-        subscribeClass(subject_href, class_info)
+                # async
+                pool.apply_async(subscribeClass, (subject_href, class_info))
