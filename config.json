@@ -1,17 +1,11 @@
 {
     "domain": "inforestudante.ipc.pt",
-    "student_number": "a2021136689",
+    "student_number": "a2020143845",
     "classes": [
         {
-            "name": "Linguagens Script",
-            "practice": ["P1"],
+            "name": "Arquiteturas Móveis",
+            "practice": ["P3"],
             "theoric": ["T1"],
-            "theoric_practice": []
-        },
-        {
-            "name": "Métodos Estatísticos",
-            "practice": ["P2"],
-            "theoric": ["T2"],
             "theoric_practice": []
         }
     ]

@@ -66,14 +66,15 @@ def subscribeClass(href, class_info):
             class_subscribed = False
             try:
                 class_subscribed = info_elems[5].find("input")["checked"] == "checked"
+                classes_list[class_name] = [class_value, class_full, class_subscribed]
             except:
+                classes_list[class_name] = [class_value, class_full, class_subscribed]
                 continue
 
-            classes_list[class_name] = [class_value, class_full, class_subscribed]
 
         for target_class in class_info[ClassesType(i).name]:
             print("[ + ] Checking {} status".format(target_class))
-            
+
             if not classes_list[target_class][1] or classes_list[target_class][2]:
                 payload["inscrever"].append(classes_list[target_class][0])
                 break
@@ -107,12 +108,13 @@ subjects_elems = soup.find("form", attrs={"id": "listaInscricoesFormBean"}).find
 subjects_list = {}
 for subject_elem in subjects_elems:
     info_elems = subject_elem.findChildren('td')
-    subject_name = info_elems[1].text
+    subject_name = info_elems[1].text.rstrip("\xa0 *")
+    subject_href_elem = info_elems[6].find("a")
+    if subject_href_elem == None:
+        continue
+    subject_href = subject_href_elem["href"]
     subject_href = info_elems[6].find("a")["href"]
-
     subjects_list[subject_name] = "{}/{}".format(subscribe_href, subject_href)
-
-print( subjects_list )
 
 for class_info in config["classes"]:
     if subjects_list[class_info["name"]]:
