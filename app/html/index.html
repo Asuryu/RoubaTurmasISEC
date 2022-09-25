@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoubaTurmasISEC</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <img class="logo" draggable="false" src="../assets/logo.png">
+
+
+    <div class="content" id="login">
+        <h1 class="header"><span>Fase 1:</span> Autenticação</h1>
+            <input type="text" id="username" placeholder="Email">
+            <input type="password" id="password" placeholder="Palavra-chave">
+        <button class="btn" id="submitBtn">Entrar</button>
+    </div>
+
+    <div id="classes">
+        <h1 class="header"><span>Fase 2:</span> Escolha das Turmas</h1>
+            <div class="subjects">
+            </div>
+            
+        <button class="btn" id="submitBtn">Inscrever</button>
+    </div>
+
+    <div class="content" id="log">
+        <h1 class="header"><span>Fase 3:</span> Output</h1>
+        <div class="loader"></div> 
+        <div class="output">
+        </div>
+        <button class="btn" id="submitBtn" disabled="true">Sair</button>
+    </div>
+
+    <script src="../js/index.js"></script>
+</body>
+</html>
