@@ -1,0 +1,21 @@
+{
+  "name": "roubaturmasisec",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Asuryu/RoubaTurmasISEC.git"
+  },
+  "version": "1.0.0",
+  "description": "Script para fazer inscrições automáticas nas turmas mais desejadas pelo utilizador",
+  "main": "main.js",
+  "dependencies": {
+    "electron": "^20.2.0",
+    "path": "^0.12.7",
+    "python-shell": "^3.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC"
+}
