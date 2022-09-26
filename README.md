@@ -1,6 +1,6 @@
 
 <h1 align="center">
-  <img src="./app/assets/logo.png" alt="Markdownify" width="90%"></a>
+  <img src="./app/assets/logo.png" alt="Markdownify" width="50%"></a>
 </h1>
 
 <h4 align="center">A CLI/GUI to shotgun classes from InforEstudante platform</h4>
