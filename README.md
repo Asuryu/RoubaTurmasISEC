@@ -110,7 +110,7 @@ $ npm start
 
 You can [download](https://github.com/Asuryu/RoubaTurmasISEC/releases) the latest version of RoubaTurmasISEC for every platform that runs Python.
 > **Note:**
-> For the GUI version, only Windows and Mac is supported
+> For the GUI version, only Windows and Mac are supported
 
 ## Credits
 
