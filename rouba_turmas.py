@@ -98,16 +98,10 @@ def login(user):
         data = { "tipoCaptcha": "text", "username": user, "password": password }
         r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
         soup = BeautifulSoup(r.text, 'html.parser') # parse the html so we can inspect it
-        error = soup.find("div", {"id": "div_erros_preenchimento_formulario"})
-
-        if error is None: # if no red error div found
-            print("[ + ] login successful")
-            break
-        else:
-            print("[ ! ] " + error.get_text())
+        error1 = soup.find("div", {"id": "div_erros_preenchimento_formulario"})
 
         if 'class="captchaTable"' in r.text:
-            print("[ ! ] Captha detected")
+            print("[ ! ] Captcha detected")
             response = requests.get("https://inforestudante.ipc.pt/nonio/simpleCaptchaImg")
             img = Image.open(BytesIO(response.content))
             img.show()
@@ -115,16 +109,22 @@ def login(user):
             data = { "tipoCaptcha": "text", "username": user, "password": password, "captcha": captcha }
             r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
             soup = BeautifulSoup(r.text, 'html.parser') # parse the html so we can inspect it
-            error = soup.find("div", {"id": "div_erros_preenchimento_formulario"})
+            error2 = soup.find("div", {"id": "div_erros_preenchimento_formulario"})
 
-            if error is None: # if no red error div found
+            if error2 is None: # if no red error div found
                 print("[ + ] login successful")
                 break
             else:
-                print("[ ! ] " + error.get_text())
+                print("[ ! ] " + error2.get_text())
                 print("[ ? ] captcha recieved: |"+ captcha + "|")
                 print("[ ? ] Captcha not working yet, try logging in the site and solving the captcha and run the script again")
                 exit()
+
+        if error1 is None: # if no red error div found
+            print("[ + ] login successful")
+            break
+        else:
+            print("[ ! ] " + error1.get_text())
 
 login("{}@isec.pt".format(config["student_number"]))
 
