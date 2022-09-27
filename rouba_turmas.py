@@ -1,4 +1,5 @@
-# pip install bs4 lxml requests
+# pip install bs4 lxml requests pillow
+from ast import While
 from asyncio import threads
 import json
 import requests
@@ -8,6 +9,8 @@ from enum import Enum
 from getpass import getpass
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
+from PIL import Image
+from io import BytesIO
 
 class ClassesType(Enum):
     practice = 1
@@ -89,13 +92,41 @@ def subscribeClass(href, class_info):
     print("[ + ] Subscription Completed!")
     return True
 
-def login(user, password):
-    data = { "tipoCaptcha": "text", "username": user, "password": password }
-    r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
+def login(user):
+    while True:
+        password = getpass()
+        data = { "tipoCaptcha": "text", "username": user, "password": password }
+        r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
+        soup = BeautifulSoup(r.text, 'html.parser') # parse the html so we can inspect it
+        error = soup.find("div", {"id": "div_erros_preenchimento_formulario"})
 
+        if error is None: # if no red error div found
+            print("[ + ] login successful")
+            break
+        else:
+            print("[ ! ] " + error.get_text())
 
-password = getpass()
-login("{}@isec.pt".format(config["student_number"]), password)
+        if 'class="captchaTable"' in r.text:
+            print("[ ! ] Captha detected")
+            response = requests.get("https://inforestudante.ipc.pt/nonio/simpleCaptchaImg")
+            img = Image.open(BytesIO(response.content))
+            img.show()
+            captcha = input("Enter the captcha you see: ")
+            data = { "tipoCaptcha": "text", "username": user, "password": password, "captcha": captcha }
+            r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
+            soup = BeautifulSoup(r.text, 'html.parser') # parse the html so we can inspect it
+            error = soup.find("div", {"id": "div_erros_preenchimento_formulario"})
+
+            if error is None: # if no red error div found
+                print("[ + ] login successful")
+                break
+            else:
+                print("[ ! ] " + error.get_text())
+                print("[ ? ] captcha recieved: |"+ captcha + "|")
+                print("[ ? ] Captcha not working yet, try logging in the site and solving the captcha and run the script again")
+                exit()
+
+login("{}@isec.pt".format(config["student_number"]))
 
 subscribe_href = "https://{}/nonio/inscturmas".format(config["domain"])
 r = get("{}/init.do".format(subscribe_href))

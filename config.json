@@ -1,10 +1,10 @@
 {
     "domain": "inforestudante.ipc.pt",
-    "student_number": "a2020143845",
+    "student_number": "a2020144466",
     "classes": [
         {
-            "name": "Arquiteturas Móveis",
-            "practice": ["P3"],
+            "name": "Programação Distribuída",
+            "practice": ["P2"],
             "theoric": ["T1"],
             "theoric_practice": []
         }
