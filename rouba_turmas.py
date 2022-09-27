@@ -11,11 +11,15 @@ from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from PIL import Image
 from io import BytesIO
+from datetime import datetime
+from datetime import timedelta
+import time
 
 class ClassesType(Enum):
     practice = 1
     theoric = 2
     theoric_practice = 3
+
 
 config = json.load(open("config.json", encoding="utf-8"))
 
@@ -92,9 +96,10 @@ def subscribeClass(href, class_info):
     print("[ + ] Subscription Completed!")
     return True
 
-def login(user):
+def login(user, auto=False, password=""):
     while True:
-        password = getpass()
+        if (not auto):
+            password = getpass()
         data = { "tipoCaptcha": "text", "username": user, "password": password }
         r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
         soup = BeautifulSoup(r.text, 'html.parser') # parse the html so we can inspect it
@@ -125,8 +130,37 @@ def login(user):
             break
         else:
             print("[ ! ] " + error1.get_text())
+            auto = False
+    return password
 
-login("{}@isec.pt".format(config["student_number"]))
+def seconds_left_to_run():
+    FMT = '%H:%M:%S'
+    tdelta = datetime.strptime(format(config["time_to_run"]), FMT) - datetime.now()
+    if tdelta.days < 0:
+        tdelta = timedelta(
+            days=0,
+            seconds=tdelta.seconds,
+            microseconds=tdelta.microseconds
+        )
+        return tdelta.total_seconds().__round__()
+    
+
+password = login("{}@isec.pt".format(config["student_number"]))
+
+if format(config["time_to_run"]) != "" :
+    print ("[ ? ] The script will run at {} and will login again two minutes before".format(config["time_to_run"]))
+    print("[ ? ] Be here two minutes before the time to make sure the login doesn't fail")
+    seconds_left = seconds_left_to_run()
+    if (seconds_left - 120 >= 0):
+        print(f"[ ? ] {seconds_left - 120} seconds to run login again")
+        time.sleep(seconds_left - 120)
+        login("{}@isec.pt".format(config["student_number"]), auto=True, password=password)
+
+if format(config["time_to_run"]) != "" :
+    seconds_left = seconds_left_to_run()
+    if (seconds_left <= 43169): # prevent break when user takes longuer than 60s to login in case of captcha
+        print(f"[ ? ] The script will start in {seconds_left} seconds")
+        time.sleep(seconds_left)
 
 subscribe_href = "https://{}/nonio/inscturmas".format(config["domain"])
 r = get("{}/init.do".format(subscribe_href))

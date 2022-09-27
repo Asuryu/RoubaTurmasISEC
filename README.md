@@ -59,6 +59,7 @@ Before launching the script you will need to edit the **config.json** file to fi
 Here is a example configuration:
 ```json
 {
+    "time_to_run": "17:37:00", // specify a time for the script to run, leave "" to run immediately
     "domain": "inforestudante.ipc.pt",
     "student_number": "a2020143845",
     "classes": [
