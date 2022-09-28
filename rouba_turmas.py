@@ -160,7 +160,16 @@ if format(config["time_to_run"]) != "" :
     seconds_left = seconds_left_to_run()
     if (seconds_left <= 43169): # prevent break when user takes longuer than 60s to login in case of captcha
         print(f"[ ? ] The script will start in {seconds_left} seconds")
-        time.sleep(seconds_left)
+        if (seconds_left - 6 >= 0):
+            time.sleep(seconds_left - 6)
+            print(f"[ ? ] The script will start in", end="")
+            time.sleep(1)
+            for i in range(5,0,-1):
+                print(f" {i}", end="")
+                time.sleep(1)
+            print()
+        else:
+            time.sleep(seconds_left)
 
 subscribe_href = "https://{}/nonio/inscturmas".format(config["domain"])
 r = get("{}/init.do".format(subscribe_href))
