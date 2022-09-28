@@ -65,9 +65,9 @@ def subscribeClass(href, class_info):
     
     payload = { "inscrever": [] }
     for i in range(1, 4 if class_info["theoric_practice"] else 3):
-        if (table_elems[i].find("table", attrs={"class": "displaytable"}) is not None):
+        try:
             classes_elems = table_elems[i].find("table", attrs={"class": "displaytable"}).find("tbody").findChildren("tr")
-        else:
+        except:
             print ("[ ! ] There doesn't seem to be any available spots in any class")
             break        
         
