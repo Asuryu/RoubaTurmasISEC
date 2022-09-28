@@ -14,6 +14,7 @@ from io import BytesIO
 from datetime import datetime
 from datetime import timedelta
 import time
+import difflib
 
 class ClassesType(Enum):
     practice = 1
@@ -196,8 +197,13 @@ for subject_elem in subjects_elems:
 threads_ = []
 
 for class_info in config["classes"]:
-    if subjects_list[class_info["name"]]:
-        subject_href = subjects_list[class_info["name"]]
+    if (class_info["name"] in subjects_list):
+        class_name = class_info["name"]
+    else:
+        class_name = difflib.get_close_matches(class_info["name"], subjects_list, n=1, cutoff=0)[0]
+        print ("[ ! ] " + '"' + class_info["name"]+ '"' + " Not Found, Using most similar match: " + '"' + class_name + '"')
+    if subjects_list[class_name]:
+        subject_href = subjects_list[class_name]
 
         # separating in function to maybe async this later
         x = threading.Thread(target=subscribeClass, args=(subject_href, class_info))
