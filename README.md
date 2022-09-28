@@ -17,6 +17,9 @@
   <a href="https://www.paypal.me/AmitMerchant">
     <img src="https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&amp;style=flat">
   </a>
+  <a href="https://builtwithnix.org">
+    <img src="https://builtwithnix.org/badge.svg">
+  </a>
 </p>
 
 <p align="center">
