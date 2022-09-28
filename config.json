@@ -1,11 +1,11 @@
 {
-    "time_to_run": "",
+    "time_to_run": "00:00:05",
     "domain": "inforestudante.ipc.pt",
     "student_number": "a2020144466",
     "classes": [
         {
             "name": "Programação Distribuídaa",
-            "practice": ["P2"],
+            "practice": ["P2", "P3"],
             "theoric": ["T1"],
             "theoric_practice": []
         }
