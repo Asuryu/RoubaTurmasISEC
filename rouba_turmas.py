@@ -1,10 +1,7 @@
 # pip install bs4 lxml requests pillow
-from ast import While
-from asyncio import threads
 import json
 import requests
 import threading
-import concurrent.futures
 from enum import Enum
 from getpass import getpass
 from bs4 import BeautifulSoup
@@ -90,55 +87,66 @@ def subscribeClass(href, class_info):
         for target_class in class_info[ClassesType(i).name]:
             print("[ + ] Checking {} status".format(target_class))
 
-            if not classes_list[target_class][1] or classes_list[target_class][2]:
-                payload["inscrever"].append(classes_list[target_class][0])
-                break
+            try:
+                if not classes_list[target_class][1] or classes_list[target_class][2]:
+                    payload["inscrever"].append(classes_list[target_class][0])
+                    break
+            except KeyError:
+                print("[ ! ] Class {} not found".format(target_class))
+                continue
+
 
             print("[ ! ] {} is full, trying the next one".format(target_class))
     
     r = post("{}/inscrever.do?method=submeter".format(subscribe_href), payload)
 
-    print("[ + ] Subscription Completed!")
+    print("[ + ] Subscription in {} completed!".format(class_info["name"]))
     return True
 
-def login(user, auto=False, password=""):
+def login(user, auto=False, password="", captcha=None):
     while True:
         if (not auto):
             if (config["password"] == ""):
                 password = getpass()
             else:
                 password = config["password"]
-        data = { "tipoCaptcha": "text", "username": user, "password": password }
+        if captcha:
+            data = { "tipoCaptcha": "text", "username": user, "password": password, "captcha": captcha }
+        else:
+            data = { "tipoCaptcha": "text", "username": user, "password": password }
         r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
         soup = BeautifulSoup(r.text, 'html.parser') # parse the html so we can inspect it
         error1 = soup.find("div", {"id": "div_erros_preenchimento_formulario"})
 
         if 'class="captchaTable"' in r.text:
             print("[ ! ] Captcha detected")
-            response = requests.get("https://inforestudante.ipc.pt/nonio/simpleCaptchaImg")
+            response = get("https://inforestudante.ipc.pt/nonio/simpleCaptchaImg")
             img = Image.open(BytesIO(response.content))
             img.show()
-            captcha = input("Enter the captcha you see: ")
+            captcha = input("[ ? ] Enter the captcha you see: ")
             data = { "tipoCaptcha": "text", "username": user, "password": password, "captcha": captcha }
             r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
             soup = BeautifulSoup(r.text, 'html.parser') # parse the html so we can inspect it
             error2 = soup.find("div", {"id": "div_erros_preenchimento_formulario"})
 
             if error2 is None: # if no red error div found
-                print("[ + ] login successful")
+                print("[ + ] Login successful")
                 break
             else:
                 print("[ ! ] " + error2.get_text())
-                print("[ ? ] captcha recieved: |"+ captcha + "|")
-                print("[ ? ] Captcha not working yet, try logging in the site and solving the captcha and run the script again")
-                exit()
-
-        if error1 is None: # if no red error div found
-            print("[ + ] login successful")
-            break
+                print("[ ? ] Captcha recieved: |"+ captcha + "|")
+                password = getpass() # ask for password again instead of using the one in config.json (use could've mistyped it in the config file)
+                login(user, auto=True, password=password, captcha=captcha)
+                break # This break statement seems useless but it works so yeah :P
+            
         else:
-            print("[ ! ] " + error1.get_text())
-            auto = False
+            if error1 is None: # if no red error div found
+                print("[ + ] Login successful")
+                break
+            else:
+                print("[ ! ] " + error1.get_text())
+                auto = False
+
     return password
 
 def seconds_left_to_run():
@@ -209,10 +217,10 @@ for class_info in config["classes"]:
     else:
         class_name = difflib.get_close_matches(class_info["name"], subjects_list, n=1, cutoff=0)[0]
         print ("[ ! ] " + '"' + class_info["name"]+ '"' + " Not Found, Using most similar match: " + '"' + class_name + '"')
+        class_info["name"] = class_name
     if subjects_list[class_name]:
         subject_href = subjects_list[class_name]
 
-        # separating in function to maybe async this later
         x = threading.Thread(target=subscribeClass, args=(subject_href, class_info))
         threads_.append(x)
         x.start()
