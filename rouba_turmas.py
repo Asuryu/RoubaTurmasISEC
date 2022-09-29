@@ -14,45 +14,9 @@ from datetime import timedelta
 import time
 import difflib
 
-class ClassesType(Enum):
-    practice = 1
-    theoric = 2
-    theoric_practice = 3
-
-
-config = json.load(open("config.json", encoding="utf-8"))
-
-s = requests.Session()
-
-izek_adapter = HTTPAdapter(max_retries=10)
-s.mount("https://{}".format(config["domain"]), izek_adapter)
-
 # inserir jsessionid token depois metemos login e deixamos isto mais bonito
 # jsessionid_token = ""
 # s.cookies.set("JSESSIONID", jsessionid_token, domain=config["domain"])
-
-def get(url):
-    while True:
-        try:
-            r = s.get(url, timeout=15)
-        except:
-            continue
-
-        if r.status_code == 200:
-            break
-    return r
-
-def post(url, data):
-    while True:
-        try:
-            r = s.post(url, data=data, timeout=15)
-        except:
-            continue
-
-        if r.status_code == 200:
-            break
-    return r
-
 
 def subscribeClass(href, class_info):
     print("[ + ] Subscribing {}".format(class_info["name"]))
