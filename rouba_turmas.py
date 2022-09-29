@@ -135,7 +135,6 @@ def login(user, auto=False, password="", captcha=None):
                 break
             else:
                 print("[ ! ] " + error2.get_text())
-                print("[ ? ] Captcha recieved: |"+ captcha + "|")
                 password = getpass() # ask for password again instead of using the one in config.json (use could've mistyped it in the config file)
                 login(user, auto=True, password=password, captcha=captcha)
                 break # This break statement seems useless but it works so yeah :P
