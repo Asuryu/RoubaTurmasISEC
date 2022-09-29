@@ -104,7 +104,10 @@ def subscribeClass(href, class_info):
 def login(user, auto=False, password=""):
     while True:
         if (not auto):
-            password = getpass()
+            if (config["password"] == ""):
+                password = getpass()
+            else:
+                password = config["password"]
         data = { "tipoCaptcha": "text", "username": user, "password": password }
         r = post("https://{}/nonio/security/login.do?method=submeter".format(config["domain"]), data)
         soup = BeautifulSoup(r.text, 'html.parser') # parse the html so we can inspect it

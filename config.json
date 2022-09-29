@@ -2,10 +2,11 @@
     "time_to_run": "",
     "domain": "inforestudante.ipc.pt",
     "student_number": "a2020144466",
+    "password": "",
     "classes": [
         {
-            "name": "Programação Distribuídaa",
-            "practice": ["P2", "P3"],
+            "name": "Arquiteturas Móveis",
+            "practice": ["P3"],
             "theoric": ["T1"],
             "theoric_practice": []
         }
