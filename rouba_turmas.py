@@ -107,8 +107,9 @@ def subscribeClass(href, class_info):
     if subscribe:
         # So it doesn't try to subscribe you anyways even if there is no space, so you don't get unsubscribed from the one you were subscribed in
         r = post("{}/inscrever.do?method=submeter".format(subscribe_href), payload)
-
-    print("[ + ] Subscription in {} completed!".format(class_info["name"]))
+        print("[ + ] Subscription in {} completed successful!".format(class_info["name"]))
+    else:
+        print("[ + ] Subscription in {} completed with no changes.".format(class_info["name"]))
     return True
 
 def login(user, auto=False, password="", captcha=None):

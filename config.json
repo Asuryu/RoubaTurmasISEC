@@ -6,14 +6,14 @@
     "classes": [
         {
             "name": "Estruturas de Dados",
-            "practice": ["P1", "P3", "P2"],
+            "practice": ["P1", "P3"],
             "theoric": [],
             "theoric_practice": []
         },
         {
             "name": "Programação WEB",
             "practice": ["P4", "P3", "P1", "P2"],
-            "theoric": ["T1"],
+            "theoric": [],
             "theoric_practice": []
         }
     ]
