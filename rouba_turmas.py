@@ -55,6 +55,7 @@ def post(url, data):
 
 def subscribeClass(href, class_info):
     print("[ + ] Subscribing {}".format(class_info["name"]))
+    subscribe = True
 
     r = get(href)
     soup = BeautifulSoup(r.text, "lxml")
@@ -84,7 +85,7 @@ def subscribeClass(href, class_info):
                 continue
 
 
-        for target_class in class_info[ClassesType(i).name]:
+        for ind, target_class in enumerate(class_info[ClassesType(i).name]):
             print("[ + ] Checking {} status".format(target_class))
 
             try:
@@ -95,10 +96,17 @@ def subscribeClass(href, class_info):
                 print("[ ! ] Class {} not found".format(target_class))
                 continue
 
+            if ind != len(class_info[ClassesType(i).name]) - 1:
+                # Isn't last item
+                print("[ ! ] {} is full, trying the next one".format(target_class))
+            else:
+                # Is last item
+                print("[ ! ] {} is full".format(target_class))
+                subscribe = False
 
-            print("[ ! ] {} is full, trying the next one".format(target_class))
-    
-    r = post("{}/inscrever.do?method=submeter".format(subscribe_href), payload)
+    if subscribe:
+        # So it doesn't try to subscribe you anyways even if there is no space, so you don't get unsubscribed from the one you were subscribed in
+        r = post("{}/inscrever.do?method=submeter".format(subscribe_href), payload)
 
     print("[ + ] Subscription in {} completed!".format(class_info["name"]))
     return True
