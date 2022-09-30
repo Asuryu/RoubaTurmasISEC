@@ -53,8 +53,8 @@ def post(url, data):
     return r
 
 
-def subscribeClass(href, class_info):
-    print("[ + ] Subscribing {}".format(class_info["name"]))
+def subscribeClass(href, class_info, thrd_index):
+    print(f"[T{thrd_index}]" + "[ + ] Subscribing {}".format(class_info["name"]))
 
     r = get(href)
     soup = BeautifulSoup(r.text, "lxml")
@@ -65,7 +65,7 @@ def subscribeClass(href, class_info):
         try:
             classes_elems = table_elems[i].find("table", attrs={"class": "displaytable"}).find("tbody").findChildren("tr")
         except:
-            print ("[ ! ] There doesn't seem to be any available spots in any class")
+            print (f"[T{thrd_index}]" + "[ ! ] There doesn't seem to be any available spots in any class")
             break        
         
         classes_list = {}
@@ -85,22 +85,22 @@ def subscribeClass(href, class_info):
 
 
         for target_class in class_info[ClassesType(i).name]:
-            print("[ + ] Checking {} status".format(target_class))
+            print(f"[T{thrd_index}]" + "[ + ] Checking {} status".format(target_class))
 
             try:
                 if not classes_list[target_class][1] or classes_list[target_class][2]:
                     payload["inscrever"].append(classes_list[target_class][0])
                     break
             except KeyError:
-                print("[ ! ] Class {} not found".format(target_class))
+                print(f"[T{thrd_index}]" + "[ ! ] Class {} not found".format(target_class))
                 continue
 
 
-            print("[ ! ] {} is full, trying the next one".format(target_class))
+            print(f"[T{thrd_index}]" + "[ ! ] {} is full, trying the next one".format(target_class))
     
     r = post("{}/inscrever.do?method=submeter".format(subscribe_href), payload)
 
-    print("[ + ] Subscription in {} completed!".format(class_info["name"]))
+    print(f"[T{thrd_index}]" + "[ + ] Subscription in {} completed!".format(class_info["name"]))
     return True
 
 def login(user, auto=False, password="", captcha=None):
@@ -211,7 +211,7 @@ for subject_elem in subjects_elems:
 
 threads_ = []
 
-for class_info in config["classes"]:
+for i,class_info in enumerate(config["classes"]):
     if (class_info["name"] in subjects_list):
         class_name = class_info["name"]
     else:
@@ -221,7 +221,7 @@ for class_info in config["classes"]:
     if subjects_list[class_name]:
         subject_href = subjects_list[class_name]
 
-        x = threading.Thread(target=subscribeClass, args=(subject_href, class_info))
+        x = threading.Thread(target=subscribeClass, args=(subject_href, class_info, i))
         threads_.append(x)
         x.start()
 
