@@ -58,8 +58,12 @@ def subscribeClass(href, class_info):
 
     r = get(href)
     soup = BeautifulSoup(r.text, "lxml")
-    table_elems = soup.find("form", attrs={"id": "inscreverFormBean"}).find("table").findChildren("tr", recursive=False)
-    
+    try:
+        table_elems = soup.find("form", attrs={"id": "inscreverFormBean"}).find("table").findChildren("tr", recursive=False)
+    except:
+        print("[ ! ] Couldn't find the subscription form")
+        return False
+
     payload = { "inscrever": [] }
     for i in range(1, 4 if class_info["theoric_practice"] else 3):
         try:
